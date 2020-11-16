@@ -28,7 +28,7 @@
             <input
               type="text"
               v-model="item.text"
-              @blur="cursor_lost($event)"
+              @blur="cursor_lost(item.id, item.text, $event)"
             />
 
             <i
@@ -74,34 +74,54 @@ export default {
   name: "HelloWorld",
   data() {
     return {
-      add_item_Text: "",
-      wait_items: [
-        {
-          id: 0,
-          text: "預設待辦項目",
-        },
-        {
-          id: 1,
-          text: "預設待辦項目2",
-        },
-      ],
-      complete_items: [
-        {
-          id: 0,
-          text: "預設完成項目",
-        },
-        {
-          id: 1,
-          text: "預設完成項目2",
-        },
-      ],
+      add_item_Text: "", //新增輸入區
+      wait_items: [], //待辦事項區
+      complete_items: [], //完成事項區
     };
   },
   methods: {
+    //取得todolist數據庫的資料
+    get_todolist_Data() {
+      let vm = this;
+      this.axios
+        .get("https://5fb210e187ed490016ea8524.mockapi.io/wait_item") //抓取待辦事項的資料
+        .then(function (response) {
+          // 成功回應
+          vm.wait_items = response.data;
+        })
+        .catch(function (error) {
+          // 失敗回應
+          console.log(error);
+        });
+
+      this.axios
+        .get("https://5fb210e187ed490016ea8524.mockapi.io/complete_item") //抓取完成事項的資料
+        .then(function (response) {
+          // 成功回應
+          vm.complete_items = response.data;
+        })
+        .catch(function (error) {
+          // 失敗回應
+          console.log(error);
+        });
+    },
     //輸入框失去焦點
-    cursor_lost(event) {
+    cursor_lost(id, text, event) {
       event.target.parentNode.firstChild.setAttribute("readonly", "true"); //設為不可修改
       event.target.parentNode.firstChild.setAttribute("class", ""); //將修改樣式隱藏
+
+      //修改待辦項目資料表對應ID中的資料
+      this.axios
+        .put("https://5fb210e187ed490016ea8524.mockapi.io/wait_item/" + id, {
+          id,
+          text,
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
     //新增待辦項目
     add_item() {
@@ -112,16 +132,31 @@ export default {
         let wait_items = self.wait_items;
 
         //這邊是為了要對應式的新增ID，才不會導致後面刪除有錯誤
-        let id1 = 0; //預設為一筆資料;id = 0
+        let id1 = 1; //預設為一筆資料;id = 0
         //如果資料不是為1筆的話
         if (wait_items.length != 0)
-          id1 = wait_items[wait_items.length - 1].id + 1; //將最大資料筆數的ID+1，也就是資料如果是 1,2,4 那麼這筆ID資料就會等於5
+          id1 = parseInt(wait_items[wait_items.length - 1].id) + 1; //將最大資料筆數的ID+1，也就是資料如果是 1,2,4 那麼這筆ID資料就會等於5
 
+        //前端畫面即時更新
         wait_items.push({
           id: id1,
           text: self.add_item_Text,
         });
-        self.add_item_Text = "";
+
+        //新增新資料到待辦項目資料表中
+        self.axios
+          .post("https://5fb210e187ed490016ea8524.mockapi.io/wait_item", {
+            id: id1,
+            text: self.add_item_Text,
+          })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
+        self.add_item_Text = ""; //最後將新增輸入文字清空，以方便下次新增
       }
     },
     //修改待辦項目
@@ -132,23 +167,48 @@ export default {
     //完成待辦項目
     complete_wait_item(id, text) {
       let self = this;
-      //抓出目前所有的待辦項目
+
+      //新增要完成的待辦事項到完成項目區
+      let complete_items = self.complete_items;
+      let id1 = 1;
+      if (complete_items.length != 0)
+        id1 = parseInt(complete_items[complete_items.length - 1].id) + 1; //(因為是要給完成區新的項目ID所以要加1)
+
+      complete_items.push({
+        id: id1,
+        text,
+      });
+
+      //刪除待辦項目資料表中對應ID的資料
+      self.axios
+        .delete("https://5fb210e187ed490016ea8524.mockapi.io/wait_item/" + id)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
+      //新增新資料到完成項目資料表中
+      self.axios
+        .post("https://5fb210e187ed490016ea8524.mockapi.io/complete_item", {
+          id: id1,
+          text,
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+
+      //抓出目前所有的待辦項目(前端即時畫面)
       for (let [key, value] of Object.entries(self.wait_items)) {
         if (id == value.id) {
           //比對到對應要刪除的筆數時
           self.wait_items.splice(key, 1); //刪除該筆資料
         }
       }
-
-      //新增要完成的待辦事項到完成項目區
-      let complete_items = self.complete_items;
-      let id1 = 0;
-      if (complete_items.length != 0)
-        id1 = complete_items[complete_items.length - 1].id + 1;
-      complete_items.push({
-        id: id1,
-        text,
-      });
     },
     //刪除待辦項目
     del_wait_item(id) {
@@ -161,6 +221,18 @@ export default {
           self.wait_items.splice(key, 1); //刪除該筆資料
         }
       }
+
+      //刪除待辦項目資料表中對應id的資料
+      self.axios
+        .delete("https://5fb210e187ed490016ea8524.mockapi.io/wait_item/" + id)
+        .then(function (response) {
+          // 成功回應
+          console.log(response);
+        })
+        .catch(function (error) {
+          // 失敗回應
+          console.log(error);
+        });
     },
     //刪除完成項目
     del_complete_item(id) {
@@ -173,7 +245,24 @@ export default {
           self.complete_items.splice(key, 1); //刪除該筆資料
         }
       }
+
+      //刪除待辦項目資料表中對應id的資料
+      self.axios
+        .delete(
+          "https://5fb210e187ed490016ea8524.mockapi.io/complete_item/" + id
+        )
+        .then(function (response) {
+          // 成功回應
+          console.log(response);
+        })
+        .catch(function (error) {
+          // 失敗回應
+          console.log(error);
+        });
     },
+  },
+  mounted() {
+    this.get_todolist_Data(); //初始載入完抓取todolist資料
   },
 };
 </script>
