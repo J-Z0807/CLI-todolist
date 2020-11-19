@@ -9,7 +9,7 @@ module.exports = {
 
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/CLI-todolist/',
+    assetsPublicPath: '/CLI-todolist/dist',
     proxyTable: {},
 
     // Various Dev Server settings
