@@ -1,0 +1,6 @@
+Step 1:下載git(https://git-scm.com/downloads)
+Step 2:下載node.js(https://nodejs.org/en/)
+Step 3:打開命令提示字元並cd到檔案路徑後輸入 (npm install -g vue-cli) 指令
+Step 4:解壓縮資料夾裡的壓縮檔(node_modules.rar)
+Step 5:npm run dev
+Step 6:開啟網頁(點選上方導航列的todolist切換到功能頁面)
