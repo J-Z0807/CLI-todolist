@@ -7,7 +7,9 @@ import App from './App'
 import router from './router'
 import 'bootstrap'; // js
 import 'bootstrap/dist/css/bootstrap.min.css'; // css
-import 'font-awesome/css/font-awesome.css' // 小圖示css
+import 'vue-awesome/icons'
+import Icon from 'vue-awesome/components/Icon'
+Vue.component('icon', Icon)
 
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false

@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <b-button> <icon name="save"></icon> Save </b-button>
     <div class="todolist_form">
       <h3 class="text-center">TodoList 練習</h3>
 
