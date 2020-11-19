@@ -8,7 +8,7 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/todolist',
+      path: '/',
       name: 'todolist',
       component: todolist
     }
