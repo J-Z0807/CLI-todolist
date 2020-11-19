@@ -1,6 +1,5 @@
 <template>
   <div class="hello">
-    <b-button> <icon name="save"></icon> Save </b-button>
     <div class="todolist_form">
       <h3 class="text-center">TodoList 練習</h3>
 
@@ -12,12 +11,13 @@
           v-model="add_item_Text"
           placeholder="輸入待辦項目"
         />
-        <i
-          class="fa fa-plus-circle"
+        <icon
+          class="fa"
+          name="plus-circle"
           id="add_item_btn"
           @click="add_item()"
           title="新增項目"
-        ></i>
+        ></icon>
       </div>
 
       <div class="wait_item_area">
@@ -32,21 +32,24 @@
               @blur="cursor_lost(item.id, item.text, $event)"
             />
 
-            <i
-              class="fa fa-pencil"
+            <icon
+              class="fa"
+              name="edit"
               @click="edit_wait_item($event)"
               title="編輯項目"
-            ></i>
-            <i
-              class="fa fa-trash"
+            ></icon>
+            <icon
+              class="fa"
+              name="trash-alt"
               title="刪除項目"
               @click="del_wait_item(item.id)"
-            ></i>
-            <i
-              class="fa fa-check-circle-o"
+            ></icon>
+            <icon
+              class="fa"
+              name="check-circle"
               @click="complete_wait_item(item.id, item.text)"
               title="完成"
-            ></i>
+            ></icon>
           </li>
         </ul>
       </div>
@@ -58,11 +61,12 @@
         <ul>
           <li v-for="item in complete_items" :key="item.id">
             <input type="text" v-model="item.text" readonly="readonly" />
-            <i
-              class="fa fa-trash"
+            <icon
+              class="fa"
+              name="trash-alt"
               @click="del_complete_item(item.id)"
               title="刪除項目"
-            ></i>
+            ></icon>
           </li>
         </ul>
       </div>
@@ -272,7 +276,6 @@ export default {
 <style scoped>
 /* 預設 */
 .fa {
-  font-size: 24px !important;
   cursor: pointer;
 }
 

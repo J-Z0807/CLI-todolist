@@ -7,8 +7,10 @@ import App from './App'
 import router from './router'
 import 'bootstrap'; // js
 import 'bootstrap/dist/css/bootstrap.min.css'; // css
-import 'vue-awesome/icons'
+
+import 'vue-awesome/icons' //icon
 import Icon from 'vue-awesome/components/Icon'
+
 Vue.component('icon', Icon)
 
 Vue.use(VueAxios, axios)
