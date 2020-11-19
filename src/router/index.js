@@ -5,7 +5,8 @@ import todolist from '@/components/todolist'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'hash',
+  mode: 'history', //本機測試
+  // mode: 'hash', //gitHub page
   routes: [
     {
       path: '/',

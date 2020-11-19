@@ -7,7 +7,7 @@ import App from './App'
 import router from './router'
 import 'bootstrap'; // js
 import 'bootstrap/dist/css/bootstrap.min.css'; // css
-import 'font-awesome' // 小圖示css
+import 'font-awesome/css/font-awesome.css' // 小圖示css
 
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
