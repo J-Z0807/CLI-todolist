@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <i class="fa fa-clock-o"></i>
     <div class="todolist_form">
       <h3 class="text-center">TodoList 練習</h3>
 
