@@ -89,7 +89,7 @@ export default {
     get_todolist_Data() {
       let vm = this;
       this.axios
-        .get("https://5fb210e187ed490016ea8524.mockapi.io/wait_item") //抓取待辦事項的資料
+        .get("/api/TodolistDataApi/getWait_item.php") //抓取待辦事項的資料
         .then(function (response) {
           // 成功回應
           vm.wait_items = response.data;
@@ -100,7 +100,7 @@ export default {
         });
 
       this.axios
-        .get("https://5fb210e187ed490016ea8524.mockapi.io/complete_item") //抓取完成事項的資料
+        .get("/api/TodolistDataApi/getComplete_item.php") //抓取完成事項的資料
         .then(function (response) {
           // 成功回應
           vm.complete_items = response.data;
@@ -117,7 +117,7 @@ export default {
 
       //修改待辦項目資料表對應ID中的資料
       this.axios
-        .put("https://5fb210e187ed490016ea8524.mockapi.io/wait_item/" + id, {
+        .put("/api/TodolistDataApi/upWait_item.php", {
           id,
           text,
         })
@@ -150,7 +150,7 @@ export default {
 
         //新增新資料到待辦項目資料表中
         self.axios
-          .post("https://5fb210e187ed490016ea8524.mockapi.io/wait_item", {
+          .post("/api/TodolistDataApi/addWait_item.php", {
             id: id1,
             text: self.add_item_Text,
           })
@@ -186,7 +186,7 @@ export default {
 
       //刪除待辦項目資料表中對應ID的資料
       self.axios
-        .delete("https://5fb210e187ed490016ea8524.mockapi.io/wait_item/" + id)
+        .delete("/api/TodolistDataApi/delWait_item.php?" + id)
         .then(function (response) {
           console.log(response);
         })
@@ -196,7 +196,7 @@ export default {
 
       //新增新資料到完成項目資料表中
       self.axios
-        .post("https://5fb210e187ed490016ea8524.mockapi.io/complete_item", {
+        .post("/api/TodolistDataApi/addComplete_item.php", {
           id: id1,
           text,
         })
@@ -229,7 +229,7 @@ export default {
 
       //刪除待辦項目資料表中對應id的資料
       self.axios
-        .delete("https://5fb210e187ed490016ea8524.mockapi.io/wait_item/" + id)
+        .delete("/api/TodolistDataApi/delWait_item.php?" + id)
         .then(function (response) {
           // 成功回應
           console.log(response);
@@ -253,9 +253,7 @@ export default {
 
       //刪除待辦項目資料表中對應id的資料
       self.axios
-        .delete(
-          "https://5fb210e187ed490016ea8524.mockapi.io/complete_item/" + id
-        )
+        .delete("/api/TodolistDataApi/delComplete_item.php?" + id)
         .then(function (response) {
           // 成功回應
           console.log(response);
