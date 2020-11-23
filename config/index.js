@@ -14,7 +14,7 @@ module.exports = {
         target: 'https://todolist-heroku-data.herokuapp.com',     //將/api 替換成設定的跨域轉換地址（需要訪問後臺地址）
         // target: 'http://localhost',     //將/api 替換成設定的跨域轉換地址（需要訪問後臺地址）
         changeOrigin: true,
-        secure: true,
+        // secure: true,
         pathRewrite: {
           '^/api': ''
         },
@@ -28,23 +28,31 @@ module.exports = {
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
+    // Use Eslint Loader?
+    // If true, your code will be linted during bundling and
+    // linting errors and warnings will be shown in the console.
+    useEslint: false,
+    // If true, eslint errors and warnings will also be shown in the error overlay
+    // in the browser.
+    showEslintErrorsInOverlay: false,
 
     /**
      * Source Maps
      */
 
     // https://webpack.js.org/configuration/devtool/#development
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'eval-source-map',
 
     // If you have problems debugging vue-files in devtools,
     // set this to false - it *may* help
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
     cacheBusting: true,
 
-    cssSourceMap: true
+    cssSourceMap: false
   },
 
   build: {
+    env: require('./prod.env'),
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),
 
@@ -52,7 +60,6 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '',
-
     /**
      * Source Maps
      */

@@ -90,7 +90,7 @@ export default {
     get_todolist_Data() {
       let self = this;
       this.axios
-        .get("/api/getWait_item.php") //抓取待辦事項的資料
+        .get(process.env.BASE_API + "/getWait_item.php") //抓取待辦事項的資料
         .then(function (response) {
           // 成功回應
           self.wait_items = response.data;
@@ -101,7 +101,7 @@ export default {
         });
 
       this.axios
-        .get("/api/getComplete_item.php") //抓取完成事項的資料
+        .get(process.env.BASE_API + "/getComplete_item.php") //抓取完成事項的資料
         .then(function (response) {
           // 成功回應
           self.complete_items = response.data;
@@ -118,7 +118,7 @@ export default {
 
       //修改待辦項目資料表對應ID中的資料
       this.axios
-        .post("/api/upWait_item.php", {
+        .post(process.env.BASE_API + "/upWait_item.php", {
           uuid,
           id,
           text,
@@ -146,7 +146,7 @@ export default {
 
         //新增新資料到待辦項目資料表中
         self.axios
-          .post("/api/addWait_item.php", {
+          .post(process.env.BASE_API + "/addWait_item.php", {
             id: id1,
             text: self.add_item_Text,
           })
@@ -183,7 +183,7 @@ export default {
 
       //刪除待辦項目資料表中對應ID的資料
       self.axios
-        .post("/api/delWait_item.php", {
+        .post(process.env.BASE_API + "/delWait_item.php", {
           uuid,
         })
         .then(function (response) {
@@ -195,7 +195,7 @@ export default {
 
       //新增新資料到完成項目資料表中
       self.axios
-        .post("/api/addComplete_item.php", {
+        .post(process.env.BASE_API + "/addComplete_item.php", {
           id: id1,
           text,
         })
@@ -233,7 +233,7 @@ export default {
 
       //刪除待辦項目資料表中對應id的資料
       self.axios
-        .post("/api/delWait_item.php", {
+        .post(process.env.BASE_API + "/delWait_item.php", {
           uuid,
         })
         .then(function (response) {
@@ -259,7 +259,7 @@ export default {
 
       //刪除完成項目資料表中對應id的資料
       self.axios
-        .post("/api/delComplete_item.php", {
+        .post(process.env.BASE_API + "/delComplete_item.php", {
           uuid,
         })
         .then(function (response) {
