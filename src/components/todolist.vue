@@ -144,6 +144,14 @@ export default {
         if (wait_items.length != 0)
           id1 = parseInt(wait_items[wait_items.length - 1].id) + 1; //將最大資料筆數的ID+1，也就是資料如果是 1,2,4 那麼這筆ID資料就會等於5
 
+        //即時更新
+        wait_items.push({
+          uuid: "",
+          id: id1,
+          text: self.add_item_Text,
+        });
+        self.wait_items = wait_items;
+
         //新增新資料到待辦項目資料表中
         self.axios
           .post(process.env.BASE_API + "/addWait_item.php", {
@@ -151,12 +159,9 @@ export default {
             text: self.add_item_Text,
           })
           .then(function (response) {
-            //即時更新
-            self.wait_items.push({
-              uuid: response.data["uuid"],
-              id: response.data["id"],
-              text: response.data["text"],
-            });
+            //給予uuid
+            self.wait_items[self.wait_items.length - 1]["uuid"] =
+              response.data["uuid"];
           })
           .catch(function (error) {
             console.log(error);
@@ -193,6 +198,14 @@ export default {
           console.log(error);
         });
 
+      //即時更新
+      complete_items.push({
+        uuid: "",
+        id: id1,
+        text,
+      });
+      self.complete_items = complete_items;
+
       //新增新資料到完成項目資料表中
       self.axios
         .post(process.env.BASE_API + "/addComplete_item.php", {
@@ -200,12 +213,9 @@ export default {
           text,
         })
         .then(function (response) {
-          //即時更新
-          self.complete_items.push({
-            uuid: response.data["uuid"],
-            id: response.data["id"],
-            text: response.data["text"],
-          });
+          //給予uuid
+          self.complete_items[self.complete_items.length - 1]["uuid"] =
+            response.data["uuid"];
         })
         .catch(function (error) {
           console.log(error);
