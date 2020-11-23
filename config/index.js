@@ -6,17 +6,18 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {        //如果遇到/api則攔截地址跳轉
-        target: 'http://localhost',     //將/api 替換成設定的跨域轉換地址（需要訪問後臺地址）
+        target: 'https://todolist-heroku-data.herokuapp.com',     //將/api 替換成設定的跨域轉換地址（需要訪問後臺地址）
+        // target: 'http://localhost',     //將/api 替換成設定的跨域轉換地址（需要訪問後臺地址）
         changeOrigin: true,
+        secure: true,
         pathRewrite: {
           '^/api': ''
-        }
+        },
       }
     },
     // Various Dev Server settings

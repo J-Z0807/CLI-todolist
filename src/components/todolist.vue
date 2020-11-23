@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <div class="todolist_form">
-      <h3 class="text-center">TodoList 練習</h3>
+      <h3 class="text-center">TodoList</h3>
 
       <div class="add_item_area">
         <input
@@ -29,7 +29,8 @@
             <input
               type="text"
               v-model="item.text"
-              @blur="cursor_lost(item.id, item.text, $event)"
+              @blur="cursor_lost(item.id, item.text, $event, item.uuid)"
+              readonly="readonly"
             />
 
             <icon
@@ -42,12 +43,12 @@
               class="fa"
               name="trash-alt"
               title="刪除項目"
-              @click="del_wait_item(item.id)"
+              @click="del_wait_item(item.id, item.uuid)"
             ></icon>
             <icon
               class="fa"
               name="check-circle"
-              @click="complete_wait_item(item.id, item.text)"
+              @click="complete_wait_item(item.id, item.text, item.uuid)"
               title="完成"
             ></icon>
           </li>
@@ -64,7 +65,7 @@
             <icon
               class="fa"
               name="trash-alt"
-              @click="del_complete_item(item.id)"
+              @click="del_complete_item(item.id, item.uuid)"
               title="刪除項目"
             ></icon>
           </li>
@@ -76,7 +77,7 @@
 
 <script>
 export default {
-  name: "HelloWorld",
+  name: "todolist",
   data() {
     return {
       add_item_Text: "", //新增輸入區
@@ -87,12 +88,12 @@ export default {
   methods: {
     //取得todolist數據庫的資料
     get_todolist_Data() {
-      let vm = this;
+      let self = this;
       this.axios
-        .get("/api/TodolistDataApi/getWait_item.php") //抓取待辦事項的資料
+        .get("/api/getWait_item.php") //抓取待辦事項的資料
         .then(function (response) {
           // 成功回應
-          vm.wait_items = response.data;
+          self.wait_items = response.data;
         })
         .catch(function (error) {
           // 失敗回應
@@ -100,10 +101,10 @@ export default {
         });
 
       this.axios
-        .get("/api/TodolistDataApi/getComplete_item.php") //抓取完成事項的資料
+        .get("/api/getComplete_item.php") //抓取完成事項的資料
         .then(function (response) {
           // 成功回應
-          vm.complete_items = response.data;
+          self.complete_items = response.data;
         })
         .catch(function (error) {
           // 失敗回應
@@ -111,13 +112,14 @@ export default {
         });
     },
     //輸入框失去焦點
-    cursor_lost(id, text, event) {
+    cursor_lost(id, text, event, uuid) {
       event.target.parentNode.firstChild.setAttribute("readonly", "true"); //設為不可修改
       event.target.parentNode.firstChild.setAttribute("class", ""); //將修改樣式隱藏
 
       //修改待辦項目資料表對應ID中的資料
       this.axios
-        .put("/api/TodolistDataApi/upWait_item.php", {
+        .post("/api/upWait_item.php", {
+          uuid,
           id,
           text,
         })
@@ -131,31 +133,30 @@ export default {
     //新增待辦項目
     add_item() {
       let self = this;
+
       if (self.add_item_Text == "") {
         alert("請輸入待辦項目後再次嘗試!");
       } else {
-        let wait_items = self.wait_items;
-
+        let wait_items = self.wait_items == "" ? [] : self.wait_items;
         //這邊是為了要對應式的新增ID，才不會導致後面刪除有錯誤
         let id1 = 1; //預設為一筆資料;id = 0
         //如果資料不是為1筆的話
         if (wait_items.length != 0)
           id1 = parseInt(wait_items[wait_items.length - 1].id) + 1; //將最大資料筆數的ID+1，也就是資料如果是 1,2,4 那麼這筆ID資料就會等於5
 
-        //前端畫面即時更新
-        wait_items.push({
-          id: id1,
-          text: self.add_item_Text,
-        });
-
         //新增新資料到待辦項目資料表中
         self.axios
-          .post("/api/TodolistDataApi/addWait_item.php", {
+          .post("/api/addWait_item.php", {
             id: id1,
             text: self.add_item_Text,
           })
           .then(function (response) {
-            console.log(response);
+            //即時更新
+            self.wait_items.push({
+              uuid: response.data["uuid"],
+              id: response.data["id"],
+              text: response.data["text"],
+            });
           })
           .catch(function (error) {
             console.log(error);
@@ -170,23 +171,21 @@ export default {
       event.target.parentNode.firstChild.setAttribute("class", "cursor_active"); //將修改樣式顯示出來
     },
     //完成待辦項目
-    complete_wait_item(id, text) {
+    complete_wait_item(id, text, uuid) {
       let self = this;
 
       //新增要完成的待辦事項到完成項目區
-      let complete_items = self.complete_items;
+      let complete_items = self.complete_items == "" ? [] : self.complete_items;
+
       let id1 = 1;
       if (complete_items.length != 0)
         id1 = parseInt(complete_items[complete_items.length - 1].id) + 1; //(因為是要給完成區新的項目ID所以要加1)
 
-      complete_items.push({
-        id: id1,
-        text,
-      });
-
       //刪除待辦項目資料表中對應ID的資料
       self.axios
-        .delete("/api/TodolistDataApi/delWait_item.php?" + id)
+        .post("/api/delWait_item.php", {
+          uuid,
+        })
         .then(function (response) {
           console.log(response);
         })
@@ -196,12 +195,17 @@ export default {
 
       //新增新資料到完成項目資料表中
       self.axios
-        .post("/api/TodolistDataApi/addComplete_item.php", {
+        .post("/api/addComplete_item.php", {
           id: id1,
           text,
         })
         .then(function (response) {
-          console.log(response);
+          //即時更新
+          self.complete_items.push({
+            uuid: response.data["uuid"],
+            id: response.data["id"],
+            text: response.data["text"],
+          });
         })
         .catch(function (error) {
           console.log(error);
@@ -216,7 +220,7 @@ export default {
       }
     },
     //刪除待辦項目
-    del_wait_item(id) {
+    del_wait_item(id, uuid) {
       let self = this;
 
       //抓出目前所有的完成項目
@@ -229,7 +233,9 @@ export default {
 
       //刪除待辦項目資料表中對應id的資料
       self.axios
-        .delete("/api/TodolistDataApi/delWait_item.php?" + id)
+        .post("/api/delWait_item.php", {
+          uuid,
+        })
         .then(function (response) {
           // 成功回應
           console.log(response);
@@ -240,7 +246,7 @@ export default {
         });
     },
     //刪除完成項目
-    del_complete_item(id) {
+    del_complete_item(id, uuid) {
       let self = this;
 
       //抓出目前所有的完成項目
@@ -251,9 +257,11 @@ export default {
         }
       }
 
-      //刪除待辦項目資料表中對應id的資料
+      //刪除完成項目資料表中對應id的資料
       self.axios
-        .delete("/api/TodolistDataApi/delComplete_item.php?" + id)
+        .post("/api/delComplete_item.php", {
+          uuid,
+        })
         .then(function (response) {
           // 成功回應
           console.log(response);
