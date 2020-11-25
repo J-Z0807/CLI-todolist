@@ -188,9 +188,7 @@ export default {
 
       //刪除待辦項目資料表中對應ID的資料
       self.axios
-        .post(process.env.BASE_API + "/delWait_item.php", {
-          uuid,
-        })
+        .get(process.env.BASE_API + "/delWait_item.php?" + uuid)
         .then(function (response) {
           console.log(response);
         })
@@ -267,9 +265,7 @@ export default {
 
       //刪除完成項目資料表中對應id的資料
       self.axios
-        .post(process.env.BASE_API + "/delComplete_item.php", {
-          uuid,
-        })
+        .get(process.env.BASE_API + "/delComplete_item.php?" + uuid)
         .then(function (response) {
           // 成功回應
           console.log(response);
